@@ -11,10 +11,13 @@ class Joystick():
   event: pygame.event
 
   def __init__(self, event):
+    pygame.joystick.init()
+    joystick = pygame.joystick.Joystick(0)
+    joystick.init()
     self.event = event
 
   def is_motion(self):
-    return self.event.type == pygame.JOYAXISMOTION and abs(self.event.value) > 0.1
+    return self.event.type == pygame.JOYAXISMOTION
 
   def toggle_recording(self):
     return self.event.type == pygame.KEYDOWN and self.event.key == pygame.K_ESCAPE
@@ -24,16 +27,20 @@ class Joystick():
 
   @property
   def direction(self):
-    if not self.event.type == pygame.JOYAXISMOTION:
+    if not self.event.type == pygame.JOYAXISMOTION and self.event.axis == 2:
       return
     return 1 if self.event.value > 0.0 else -1
   
   @property
   def x(self):
-    if not self.event.type == pygame.JOYAXISMOTION:
+    if not self.event.type == pygame.JOYAXISMOTION and self.event.axis == 0:
       return
     return self.event.value
-    
+
+  def is_moving(self):
+    if not self.event.type == pygame.JOYAXISMOTION and self.event.axis == 2:
+      return
+    return abs(self.event.value) > 0.1
 
 def run(conn: cozmo.conn.CozmoConnection):
   robot = conn.wait_for_robot()
@@ -53,16 +60,18 @@ def run(conn: cozmo.conn.CozmoConnection):
   directions = list()
 
   while run:
-
     for event in pygame.event.get():
       joystick = Joystick(event)
       
       if joystick.is_motion():
-        direction, x = joystick.direction, joystick.x
+        if not joystick.is_moving():
+          robot.stop_all_motors()
+        else:
+          direction, x = joystick.direction, joystick.x
 
-        l_wheel_speed = (direction * DRIVE_SPEED) + (x * 75.0)
-        r_wheel_speed = (direction * DRIVE_SPEED) - (x * 75.0)
-        robot.drive_wheel_motors(l_wheel_speed, r_wheel_speed, l_wheel_acc=500, r_wheel_acc=500)
+          l_wheel_speed = (direction * DRIVE_SPEED) + (x * 75.0)
+          r_wheel_speed = (direction * DRIVE_SPEED) - (x * 75.0)
+          robot.drive_wheel_motors(l_wheel_speed, r_wheel_speed, l_wheel_acc=500, r_wheel_acc=500)
       elif joystick.toggle_recording():
         recording = not recording
         if recording:
