@@ -1,22 +1,20 @@
-import os
-import json
-import keras.models as models
+from os import environ
 
-os.environ['KERAS_BACKEND'] = 'theano'
-os.environ['THEANO_FLAGS']='mode=FAST_RUN,device=cuda0,floatX=float32,optimizer=None'
+import json
 
 from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation, Flatten, Reshape
+from keras.layers.core import Dense, Flatten
 from keras.layers import BatchNormalization
 from keras.layers import Conv2D
 
-imgSize = (66, 200, 3) # h, w, channels
+environ['THEANO_FLAGS']='mode=FAST_RUN,device=cuda0,floatX=float32,optimizer=None'
+environ['KERAS_BACKEND'] = 'theano'
 
-# We used the model made by Nvidia: https://arxiv.org/pdf/1604.07316.pdf
+# ------------------------ Model from nvidia ------------------------
 
 model = Sequential()
 
-model.add(BatchNormalization(epsilon=0.001, axis=1, input_shape=imgSize))
+model.add(BatchNormalization(epsilon=0.001, axis=1, input_shape=(66, 200, 3)))
 
 model.add(Conv2D(24, (5,5), padding='valid', activation='relu', strides=(2,2)))
 model.add(Conv2D(36, (5,5), padding='valid', activation='relu', strides=(2,2)))
@@ -31,6 +29,7 @@ model.add(Dense(1, activation='tanh'))
 
 model.summary()
 
-# Save model to JSON
-with open('autopilot_basic_model.json', 'w') as outfile:
-    outfile.write(json.dumps(json.loads(model.to_json()), indent=2))
+# ------------------------ Saving the model as json file ------------------------
+
+with open('model.json', 'w') as jsonfile:
+    jsonfile.write(json.dumps(json.loads(model.to_json()), indent=2))
