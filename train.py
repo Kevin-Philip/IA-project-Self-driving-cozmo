@@ -52,7 +52,7 @@ with open('model.json') as model_file:
 model.compile(loss='mean_squared_error',
               optimizer=Adam(lr=0.0001))
 
-epochs = 25
+epochs = 60
 batch_size = 64
 
 # Train model
