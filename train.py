@@ -33,6 +33,20 @@ for imgfile, dirfile in zip(images_files, directions_files):
     images = np.append(images, np.load(imgfile)['images'], axis=0)
     directions = np.append(directions, np.load(dirfile)['directions'], axis=0)
 
+# ------------------------ Data augmentation ------------------------
+
+
+# Create augmented data
+new_images = np.zeros(images.shape, dtype=np.float16)
+new_directions = np.zeros(directions.shape, dtype=np.float32)
+for i in range(0, images.shape[0]):
+    new_images[i,:] = np.fliplr(imgs[i,:]) # We flip the image to the right 
+    new_directions[i] = -directions[i] # By flipping the image to the right, we inverse the direction the robot needs to go
+
+# We append these new images and directions to train data.
+images = np.append(images, new_images, axis=0) 
+directions = np.append(directions, new_directions, axis=0)
+
 print(f'Have {images.shape[0]} training images')
 
 # ------------------------ Shuffle images and directions ------------------------
