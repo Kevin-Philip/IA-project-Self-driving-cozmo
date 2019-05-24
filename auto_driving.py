@@ -24,7 +24,7 @@ def run(sdk_conn):
     joystick.init()
     
     # Setting image size (height, width, channels)
-    imgSize = (66, 200, 3)
+    imgSize = record.IMG_SIZE
 
     # Loading the model
     model = Sequential()
@@ -39,7 +39,7 @@ def run(sdk_conn):
     robot.camera.image_stream_enabled = True
     robot.camera.color_image_enabled = True
     robot.set_lift_height(1.0, in_parallel=True)
-    robot.set_head_angle(robot.MIN_HEAD_ANGLE + degrees(5), in_parallel=True)
+    robot.set_head_angle(cozmo.robot.MIN_HEAD_ANGLE + cozmo.util.degrees(5), in_parallel=True)
 
     # Display
     screen = pygame.display.set_mode((320,240))
