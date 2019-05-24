@@ -36,6 +36,7 @@ for imgfile, dirfile in zip(images_files, directions_files):
 # ------------------------ Data augmentation ------------------------
 
 
+print("Data augmentation...")
 # Create augmented data
 new_images = np.zeros(images.shape, dtype=np.float16)
 new_directions = np.zeros(directions.shape, dtype=np.float32)
@@ -43,11 +44,16 @@ for i in range(0, images.shape[0]):
     new_images[i,:] = np.fliplr(images[i,:]) # We flip the image to the right 
     new_directions[i] = -directions[i] # By flipping the image to the right, we inverse the direction the robot needs to go
 
+    if i%100 == 0:
+        percentage = (i/images.shape[0])*100
+        print(f"Images {i} : {percentage}%")
+
 # We append these new images and directions to train data.
 images = np.append(images, new_images, axis=0) 
 directions = np.append(directions, new_directions, axis=0)
 
 print(f'Have {images.shape[0]} training images')
+
 
 # ------------------------ Shuffle images and directions ------------------------
 
