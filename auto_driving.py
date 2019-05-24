@@ -9,6 +9,7 @@ from keras.models import Sequential
 import numpy as np
 import pygame
 import cozmo
+import record
 from PIL import Image
 
 # Speed constant

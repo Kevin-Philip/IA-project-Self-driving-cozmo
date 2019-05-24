@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 # ------------------------ Initialisation ------------------------
 
 # Retrieve images sizes from recording
-imgSize = record.imgSize
+imgSize = record.IMG_SIZE
 
 # ------------------------ Load training data ------------------------
 
